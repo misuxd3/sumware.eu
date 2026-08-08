@@ -590,24 +590,18 @@
     `).join("");
   }
 
-  async function downloadForum() {
-    const zip = new JSZip();
-
-    // add whatever files you want inside the zip
-    zip.file("posts.json", JSON.stringify(getPosts(), null, 2));
-    zip.file("members.json", JSON.stringify(getMembers(), null, 2));
-    zip.file("readme.txt", "Exported from the forum on " + new Date().toLocaleString());
-
-    const blob = await zip.generateAsync({ type: "blob" });
-    const url = URL.createObjectURL(blob);
+ function downloadForum() {
     const a = document.createElement("a");
-    a.href = url;
-    a.download = "forum-export.zip";
+
+    a.href = "/files/package.zip";
+    a.download = "package.zip";
+
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
+}
+
+
 </script>
 
 </body>
