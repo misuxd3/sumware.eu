@@ -3,406 +3,612 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>sumware.eu</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<title>Invite Only</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
-  :root{
-    --bg: #FAFAFD;
-    --bg-deep: #171030;
-    --purple-700: #4C1D95;
-    --purple-600: #7C3AED;
-    --purple-500: #9061F9;
-    --purple-400: #A78BFA;
-    --lilac-100: #F1EBFC;
-    --ink: #14101F;
-    --white: #FFFFFF;
-    --line: rgba(20,16,31,0.10);
-    --line-dark: rgba(255,255,255,0.14);
+  :root {
+    --bg: #000000;
+    --panel: #000000;
+    --accent: #ffffff;
+    --text: #ffffff;
+    --muted: #6a6a6a;
+    --error: #ff5c5c;
   }
-
-  *{ box-sizing: border-box; margin:0; padding:0; }
-  html{ scroll-behavior: smooth; }
-
-  body{
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
     background: var(--bg);
-    color: var(--ink);
-    font-family: 'Inter', sans-serif;
-    -webkit-font-smoothing: antialiased;
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
   }
 
-  a{ color: inherit; text-decoration: none; }
-  ul{ list-style: none; }
-  .display{ font-family: 'Space Grotesk', sans-serif; }
-  .mono{ font-family: 'JetBrains Mono', monospace; letter-spacing: 0.02em; }
-
-  :focus-visible{
-    outline: 2px solid var(--purple-500);
-    outline-offset: 3px;
-    border-radius: 4px;
-  }
-
-  .wrap{
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 0 32px;
-  }
-
-  .reticle{
-    display: inline-block;
-    width: 1em; height: 1em;
-    vertical-align: -0.12em;
-  }
-  .reticle svg{ width:100%; height:100%; display:block; }
-
-  /* ---------- NAV ---------- */
-  header{
-    padding: 24px 0;
-    border-bottom: 1px solid var(--line);
-  }
-  nav{
-    display:flex;
-    align-items:center;
-    justify-content: space-between;
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 0 32px;
-  }
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    font-weight: 700;
-    font-size: 1.1rem;
-  }
-  .brand .reticle{ color: var(--purple-600); }
-  .brand .sun-logo{ color: var(--purple-600); }
-  .navlinks{
-    display:flex;
-    gap: 30px;
-    font-size: 0.92rem;
-    color: rgba(20,16,31,0.6);
-  }
-  .navlinks a:hover{ color: var(--ink); }
-  @media (max-width: 640px){ .navlinks{ display:none; } }
-  .nav-cta{
-    background: var(--purple-600);
-    color: var(--white);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 0.88rem;
-    font-weight: 600;
-  }
-  .nav-cta:hover{ background: var(--purple-500); }
-
-  /* ---------- HERO ---------- */
-  .hero{
-    padding: 120px 0 100px;
+  /* ---- Gate screen ---- */
+  #gate {
+    background: var(--panel);
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 380px;
     text-align: center;
+    animation: fadeIn 0.5s ease;
   }
-  .eyebrow{
-    display:inline-flex;
-    align-items:center;
-    gap: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.76rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--purple-600);
-    border: 1px solid var(--line);
-    padding: 7px 13px;
-    border-radius: 100px;
+  #gate h1 {
+    font-size: 22px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  #gate p.sub {
+    color: var(--muted);
+    font-size: 13px;
     margin-bottom: 28px;
   }
-  .hero h1{
-    font-size: clamp(2.4rem, 5.5vw, 3.8rem);
-    line-height: 1.08;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    max-width: 16ch;
-    margin: 0 auto;
-  }
-  .hero h1 .accent{ color: var(--purple-600); }
-  .hero p.sub{
-    margin: 26px auto 0;
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: rgba(20,16,31,0.6);
-    max-width: 46ch;
-  }
-  .hero-ctas{
-    margin-top: 36px;
-    display:flex;
-    gap: 14px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  .btn{
-    display:inline-flex;
-    align-items:center;
-    gap: 9px;
-    padding: 14px 26px;
+  #codeInput {
+    width: 100%;
+    padding: 14px 16px;
+    background: #0d0d10;
+    border: 1px solid #333;
     border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.97rem;
-  }
-  .btn-primary{
-    background: var(--purple-600);
-    color: var(--white);
-  }
-  .btn-primary:hover{ background: var(--purple-500); }
-  .btn-ghost{
-    background: var(--white);
-    color: var(--ink);
-    border: 1px solid var(--line);
-  }
-  .btn-ghost:hover{ border-color: var(--purple-400); color: var(--purple-600); }
-
-  /* ---------- PRICING ---------- */
-  .pricing{
-    background: var(--bg-deep);
-    color: var(--white);
-    padding: 100px 0;
-  }
-  .section-head{
-    max-width: 560px;
-    margin: 0 auto 56px;
+    color: var(--text);
+    font-size: 16px;
+    letter-spacing: 2px;
     text-align: center;
-  }
-  .kicker{
-    font-family:'JetBrains Mono', monospace;
-    font-size: 0.76rem;
-    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--purple-400);
-    margin-bottom: 14px;
+    outline: none;
+    transition: border 0.2s;
   }
-  .section-head h2{
-    font-size: clamp(1.9rem, 3.4vw, 2.4rem);
-    font-weight: 700;
-    letter-spacing: -0.01em;
+  #codeInput:focus { border-color: var(--accent); }
+  #userInput, #passInput {
+    width: 100%;
+    padding: 14px 16px;
+    background: #0d0d10;
+    border: 1px solid #333;
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 10px;
+    transition: border 0.2s;
   }
-  .section-head p{
+  #userInput:focus, #passInput:focus { border-color: var(--accent); }
+  #enterBtn {
+    width: 100%;
     margin-top: 14px;
-    color: rgba(255,255,255,0.6);
-    font-size: 1.02rem;
-    line-height: 1.6;
-  }
-
-  .price-grid{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-  @media (max-width: 860px){ .price-grid{ grid-template-columns: 1fr; } }
-
-  .plan{
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--line-dark);
-    border-radius: 16px;
-    padding: 32px 26px;
-    display:flex;
-    flex-direction:column;
-  }
-  .plan.featured{
-    border-color: var(--purple-500);
-    background: linear-gradient(180deg, rgba(124,58,237,0.14), rgba(124,58,237,0.02));
-    position: relative;
-  }
-  .plan.featured::before{
-    content: "MOST POPULAR";
-    position: absolute;
-    top: -12px; left: 26px;
-    background: var(--purple-600);
-    color: var(--white);
-    font-family:'JetBrains Mono', monospace;
-    font-size: 0.64rem;
-    letter-spacing: 0.08em;
-    padding: 5px 10px;
-    border-radius: 6px;
-  }
-  .plan h3{
-    font-family:'Space Grotesk', sans-serif;
-    font-size: 1.25rem;
+    padding: 14px;
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    color: #000000;
+    font-size: 15px;
     font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
   }
-  .plan .price{
-    display:flex;
-    align-items: baseline;
-    gap: 6px;
-    margin: 16px 0 4px;
+  #enterBtn:hover { transform: translateY(-1px); opacity: 0.85; }
+  #enterBtn:active { transform: translateY(0); }
+  #errorMsg {
+    color: var(--error);
+    font-size: 13px;
+    margin-top: 14px;
+    height: 16px;
+    opacity: 0;
+    transition: opacity 0.2s;
   }
-  .plan .price .amount{
-    font-family:'JetBrains Mono', monospace;
-    font-size: 2.2rem;
-    font-weight: 700;
+  #errorMsg.show { opacity: 1; }
+  .shake { animation: shake 0.35s; }
+  @keyframes shake {
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
   }
-  .plan .price .period{ font-size: 0.84rem; color: rgba(255,255,255,0.5); }
-  .plan .desc{
-    font-size: 0.87rem;
-    color: rgba(255,255,255,0.55);
-    margin-bottom: 20px;
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  .plan ul{
-    display:flex;
-    flex-direction: column;
-    gap: 11px;
-    margin-bottom: 26px;
-    flex: 1;
-  }
-  .plan li{
-    display:flex;
-    align-items:flex-start;
-    gap: 9px;
-    font-size: 0.89rem;
-    color: rgba(255,255,255,0.78);
-  }
-  .plan li .reticle{
-    color: var(--purple-400);
-    flex-shrink: 0;
-    margin-top: 3px;
-    width: 13px; height:13px;
-  }
-  .plan .btn{ justify-content:center; width: 100%; }
 
-  /* ---------- FOOTER ---------- */
-  footer{
-    padding: 32px 0;
-    text-align: center;
-    color: rgba(20,16,31,0.4);
-    font-size: 0.82rem;
+  /* ---- Main site (unlocked content) ---- */
+  #site {
+    display: none;
+    width: 100%;
+    max-width: 900px;
+    padding: 60px 40px;
+    animation: fadeIn 0.6s ease;
   }
+  #site h1 { font-size: 32px; margin-bottom: 12px; }
+  #site p { color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+  #logoutBtn {
+    background: transparent;
+    border: 1px solid #333;
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  #logoutBtn:hover { border-color: var(--accent); color: var(--text); }
+
+  #downloadLink {
+    position: fixed;
+    top: 24px;
+    right: 32px;
+    color: var(--text);
+    font-size: 13px;
+    text-decoration: none;
+    border-bottom: 1px solid var(--muted);
+    padding-bottom: 2px;
+    cursor: pointer;
+    z-index: 10;
+  }
+  #downloadLink:hover { border-color: var(--text); opacity: 0.8; }
+
+  #brandLogo {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    z-index: 10;
+    user-select: none;
+  }
+  #brandLogo .sum { color: #a855f7; }
+  #brandLogo .ware { color: #ffffff; }
+
+  /* ---- Forum ---- */
+  #site { max-width: 700px; }
+  .forum-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #222;
+    padding-bottom: 16px;
+  }
+  .forum-header h1 { font-size: 24px; }
+  #newPostBox {
+    background: #0a0a0a;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+  #newPostBox input, #newPostBox textarea {
+    width: 100%;
+    background: #000;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px 12px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-family: inherit;
+    outline: none;
+  }
+  #newPostBox input:focus, #newPostBox textarea:focus { border-color: var(--accent); }
+  #newPostBox textarea { resize: vertical; min-height: 70px; }
+  #postBtn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  #postBtn:hover { opacity: 0.85; }
+  .post {
+    border: 1px solid #1f1f1f;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    background: #060606;
+  }
+  .post-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .post-meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .post-body { font-size: 14px; color: #ccc; line-height: 1.5; margin-bottom: 12px; white-space: pre-wrap; }
+  .replies { margin-left: 12px; padding-left: 14px; border-left: 1px solid #1f1f1f; }
+  .reply { font-size: 13px; color: #bbb; margin-bottom: 8px; }
+  .reply .reply-meta { color: var(--muted); font-size: 11px; margin-bottom: 2px; }
+  .reply-form { display: flex; gap: 8px; margin-top: 10px; }
+  .reply-form input {
+    flex: 1;
+    background: #000;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    color: var(--text);
+    padding: 6px 10px;
+    font-size: 13px;
+    outline: none;
+  }
+  .reply-form button {
+    background: transparent;
+    border: 1px solid #333;
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .reply-form button:hover { border-color: var(--accent); color: var(--text); }
+  .empty-msg { color: var(--muted); text-align: center; padding: 30px 0; font-size: 13px; }
+
+  /* ---- Tabs & Members ---- */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #222;
+  }
+  .tab {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    padding: 10px 18px;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 2px solid transparent;
+  }
+  .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+  .tab:hover { color: var(--text); }
+  .member-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #1f1f1f;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    background: #060606;
+  }
+  .member-name { font-size: 14px; font-weight: 600; }
+  .member-meta { font-size: 12px; color: var(--muted); }
 </style>
 </head>
 <body>
 
-<header>
-  <nav>
-    <div class="brand">
-      <span class="reticle sun-logo"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="3.5"/><line x1="12" y1="20.5" x2="12" y2="23"/><line x1="1" y1="12" x2="3.5" y2="12"/><line x1="20.5" y1="12" x2="23" y2="12"/><line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/><line x1="19.8" y1="4.2" x2="18" y2="6"/><line x1="6" y1="18" x2="4.2" y2="19.8"/></g></svg></span>
-      sumware.eu
-    </div>
-    <div class="navlinks">
-      <a href="#pricing">Pricing</a>
-      <a href="#pricing-legacy">CSGO Legacy</a>
-      <a href="https://discord.gg/ZBeS23FpJ" target="_blank" rel="noopener">Discord</a>
-    </div>
-    <a href="#pricing" class="nav-cta">Get access</a>
-  </nav>
-</header>
+  <div id="brandLogo"><span class="sum">sum</span><span class="ware">ware</span></div>
 
-<section class="hero">
-  <div class="wrap">
-    <div class="eyebrow">build 4.12.0</div>
-    <h1 class="display">The <span class="accent">movement cheat</span> built for CS2.</h1>
-    <p class="sub">sumware provides the best movement cheat to CS2 and also can provide for CSGO legacy.</p>
-    <div class="hero-ctas">
-      <a href="#pricing" class="btn btn-primary">View plans</a>
-      <a href="https://discord.gg/ZBeS23FpJ" target="_blank" rel="noopener" class="btn btn-ghost">Join Discord</a>
+  <!-- GATE -->
+  <div id="gate">
+    <h1>INSERT INVITE CODE</h1>
+    <p class="sub">Enter your details to continue</p>
+    <input type="text" id="userInput" placeholder="Username" maxlength="24" autocomplete="off">
+    <input type="password" id="passInput" placeholder="Password" maxlength="64" autocomplete="off">
+    <input type="text" id="codeInput" placeholder="Invite Code" maxlength="20" autocomplete="off">
+    <button id="enterBtn" onclick="tryEnter()">Enter</button>
+    <div id="errorMsg">Invalid or expired code</div>
+  </div>
+
+  <!-- MAIN SITE (hidden until unlocked) -->
+  <div id="site">
+    <a id="downloadLink" onclick="downloadForum()">Download</a>
+    <div class="forum-header">
+      <h1>Forum</h1>
+      <button id="logoutBtn" onclick="lock()">Log out</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-forum" onclick="showTab('forum')">Forum</button>
+      <button class="tab" id="tab-members" onclick="showTab('members')">Members</button>
+    </div>
+
+    <div id="forumView">
+      <div id="newPostBox">
+        <input type="text" id="postTitle" placeholder="Post title" maxlength="80">
+        <textarea id="postBody" placeholder="What's on your mind?"></textarea>
+        <button id="postBtn" onclick="createPost()">Post</button>
+      </div>
+
+      <div id="postsList"></div>
+    </div>
+
+    <div id="membersView" style="display:none;">
+      <div id="membersList"></div>
     </div>
   </div>
-</section>
 
-<section class="pricing" id="pricing">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="kicker">CS2 pricing</div>
-      <h2 class="display">Pick your plan.</h2>
-      <p>Simple access, cancel any time.</p>
-    </div>
+<script>
+  /* =========================================================
+     EDIT THIS LIST to control who gets in.
+     - "code": the string people type in
+     - "maxUses": how many different people/devices can use it (set high number for "unlimited")
+     - "expires": ISO date string, or null for no expiry
+     ========================================================= */
+  const INVITE_CODES = [
+    { code: "RAVEN-7X2K", maxUses: 1, expires: null },
+    { code: "ONYX-91LM",  maxUses: 1, expires: null },
+    { code: "GHOST-4QZP", maxUses: 1, expires: null },
+    { code: "VOID-88TN",  maxUses: 1, expires: null },
+    { code: "CIPHER-3RJ", maxUses: 1, expires: null },
+    { code: "SHADE-62WX", maxUses: 1, expires: null },
+    { code: "ECHO-15VB",  maxUses: 1, expires: null },
+    { code: "NULL-73KD",  maxUses: 1, expires: null },
+    { code: "OBSIDIAN-9", maxUses: 1, expires: null },
+    { code: "DRIFT-42PC", maxUses: 1, expires: null }
+  ];
 
-    <div class="price-grid">
-      <div class="plan">
-        <h3 class="display">1 Month</h3>
-        <div class="price"><span class="amount mono">€9</span><span class="period">/ mo</span></div>
-        <p class="desc">Core movement module.</p>
-        <ul>
-          <li><span class="reticle"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>CS2 support</li>
-          <li><span class="reticle"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Community Discord</li>
-          <li><span class="reticle"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Basic updates</li>
-        </ul>
-        <a href="#" class="btn btn-ghost">Select</a>
+  const STORAGE_KEY = "invite_site_unlocked"; // holds current logged-in username
+  const USAGE_KEY = "invite_site_usage"; // tracks uses per code, stored locally
+  const MEMBERS_KEY = "invite_site_members";
+
+  function getUsage() {
+    try { return JSON.parse(localStorage.getItem(USAGE_KEY)) || {}; }
+    catch { return {}; }
+  }
+
+  function saveUsage(usage) {
+    localStorage.setItem(USAGE_KEY, JSON.stringify(usage));
+  }
+
+  function getMembers() {
+    try { return JSON.parse(localStorage.getItem(MEMBERS_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveMembers(members) {
+    localStorage.setItem(MEMBERS_KEY, JSON.stringify(members));
+  }
+
+  function normalizeCode(str) {
+    return str.trim().toUpperCase();
+  }
+
+  function validateCode(input) {
+    const norm = normalizeCode(input);
+    const entry = INVITE_CODES.find(c => normalizeCode(c.code) === norm);
+    if (!entry) return { ok: false, reason: "not_found" };
+
+    if (entry.expires) {
+      const exp = new Date(entry.expires);
+      if (new Date() > exp) return { ok: false, reason: "expired" };
+    }
+
+    const usage = getUsage();
+    const used = usage[norm] || 0;
+    if (used >= entry.maxUses) return { ok: false, reason: "exhausted" };
+
+    return { ok: true, entry, norm, used };
+  }
+
+  function showError(msg) {
+    const gate = document.getElementById("gate");
+    const err = document.getElementById("errorMsg");
+    err.textContent = msg;
+    err.classList.add("show");
+    gate.classList.add("shake");
+    setTimeout(() => gate.classList.remove("shake"), 350);
+  }
+
+  function tryEnter() {
+    const username = document.getElementById("userInput").value.trim();
+    const password = document.getElementById("passInput").value;
+    const codeRaw = document.getElementById("codeInput").value;
+
+    if (!username || !password) {
+      showError("Username and password required");
+      return;
+    }
+
+    const members = getMembers();
+    const existing = members.find(m => m.username.toLowerCase() === username.toLowerCase());
+
+    if (existing) {
+      // returning member — password must match, invite code not required
+      if (existing.password !== password) {
+        showError("Incorrect password");
+        return;
+      }
+      localStorage.setItem(STORAGE_KEY, existing.username);
+      unlock();
+      return;
+    }
+
+    // new member — invite code required
+    const result = validateCode(codeRaw);
+    if (!result.ok) {
+      showError("Invalid or expired invite code");
+      return;
+    }
+
+    // consume one use of the code
+    const usage = getUsage();
+    usage[result.norm] = (usage[result.norm] || 0) + 1;
+    saveUsage(usage);
+
+    // create the member
+    members.push({
+      username,
+      password,
+      joinedAt: Date.now(),
+      invitedByCode: result.norm
+    });
+    saveMembers(members);
+
+    localStorage.setItem(STORAGE_KEY, username);
+    unlock();
+  }
+
+  function unlock() {
+    document.getElementById("gate").style.display = "none";
+    document.getElementById("site").style.display = "block";
+    renderMembers();
+  }
+
+  function lock() {
+    localStorage.removeItem(STORAGE_KEY);
+    document.getElementById("site").style.display = "none";
+    document.getElementById("gate").style.display = "block";
+    document.getElementById("codeInput").value = "";
+    document.getElementById("userInput").value = "";
+    document.getElementById("passInput").value = "";
+  }
+
+  // Allow Enter key to submit from any gate field
+  ["userInput", "passInput", "codeInput"].forEach(id => {
+    document.getElementById(id).addEventListener("keydown", e => {
+      if (e.key === "Enter") tryEnter();
+    });
+  });
+
+  function showTab(name) {
+    document.getElementById("tab-forum").classList.toggle("active", name === "forum");
+    document.getElementById("tab-members").classList.toggle("active", name === "members");
+    document.getElementById("forumView").style.display = name === "forum" ? "block" : "none";
+    document.getElementById("membersView").style.display = name === "members" ? "block" : "none";
+    if (name === "members") renderMembers();
+  }
+
+  function renderMembers() {
+    const container = document.getElementById("membersList");
+    if (!container) return;
+    const members = getMembers();
+
+    if (members.length === 0) {
+      container.innerHTML = '<div class="empty-msg">No members yet.</div>';
+      return;
+    }
+
+    container.innerHTML = members
+      .slice()
+      .sort((a, b) => a.joinedAt - b.joinedAt)
+      .map(m => `
+        <div class="member-row">
+          <div class="member-name">${escapeHtml(m.username)}</div>
+          <div class="member-meta">joined ${timeAgo(m.joinedAt)}</div>
+        </div>
+      `).join("");
+  }
+
+  // Auto-unlock if this device already has a logged-in session
+  window.addEventListener("DOMContentLoaded", () => {
+    const remembered = localStorage.getItem(STORAGE_KEY);
+    if (remembered) {
+      const members = getMembers();
+      const stillExists = members.find(m => m.username === remembered);
+      if (stillExists) unlock();
+      else localStorage.removeItem(STORAGE_KEY);
+    }
+    renderPosts();
+  });
+
+  /* ================= FORUM ================= */
+  const POSTS_KEY = "forum_posts";
+
+  function getPosts() {
+    try { return JSON.parse(localStorage.getItem(POSTS_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function savePosts(posts) {
+    localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function timeAgo(ts) {
+    const diff = Math.floor((Date.now() - ts) / 1000);
+    if (diff < 60) return "just now";
+    if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+    if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+    return Math.floor(diff / 86400) + "d ago";
+  }
+
+  function createPost() {
+    const title = document.getElementById("postTitle").value.trim();
+    const body = document.getElementById("postBody").value.trim();
+    if (!title || !body) return;
+
+    const posts = getPosts();
+    const whoami = localStorage.getItem(STORAGE_KEY) || "Unknown";
+    posts.unshift({
+      id: Date.now(),
+      title,
+      body,
+      author: whoami,
+      ts: Date.now(),
+      replies: []
+    });
+    savePosts(posts);
+
+    document.getElementById("postTitle").value = "";
+    document.getElementById("postBody").value = "";
+    renderPosts();
+  }
+
+  function addReply(postId) {
+    const input = document.getElementById("reply-input-" + postId);
+    const text = input.value.trim();
+    if (!text) return;
+
+    const posts = getPosts();
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+
+    const whoami = localStorage.getItem(STORAGE_KEY) || "Unknown";
+    post.replies.push({ author: whoami, body: text, ts: Date.now() });
+    savePosts(posts);
+    renderPosts();
+  }
+
+  function renderPosts() {
+    const container = document.getElementById("postsList");
+    if (!container) return;
+    const posts = getPosts();
+
+    if (posts.length === 0) {
+      container.innerHTML = '<div class="empty-msg">No posts yet. Be the first.</div>';
+      return;
+    }
+
+    container.innerHTML = posts.map(post => `
+      <div class="post">
+        <div class="post-title">${escapeHtml(post.title)}</div>
+        <div class="post-meta">by ${escapeHtml(post.author)} · ${timeAgo(post.ts)}</div>
+        <div class="post-body">${escapeHtml(post.body)}</div>
+        <div class="replies">
+          ${post.replies.map(r => `
+            <div class="reply">
+              <div class="reply-meta">${escapeHtml(r.author)} · ${timeAgo(r.ts)}</div>
+              ${escapeHtml(r.body)}
+            </div>
+          `).join("")}
+        </div>
+        <div class="reply-form">
+          <input type="text" id="reply-input-${post.id}" placeholder="Reply...">
+          <button onclick="addReply(${post.id})">Reply</button>
+        </div>
       </div>
+    `).join("");
+  }
 
-      <div class="plan featured">
-        <h3 class="display">3 Months</h3>
-        <div class="price"><span class="amount mono">€19</span><span class="period">/ 3mo</span></div>
-        <p class="desc">Full movement suite for CS2.</p>
-        <ul>
-          <li><span class="reticle"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>CS2 support</li>
-          <li><span class="reticle"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Priority updates</li>
-          <li><span class="reticle"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Config presets</li>
-        </ul>
-        <a href="#" class="btn btn-primary">Select</a>
-      </div>
+  async function downloadForum() {
+    const zip = new JSZip();
 
-      <div class="plan">
-        <h3 class="display">Lifetime</h3>
-        <div class="price"><span class="amount mono">€39</span><span class="period">one-time</span></div>
-        <p class="desc">Pay once, access forever.</p>
-        <ul>
-          <li><span class="reticle"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Everything in 3 Months</li>
-          <li><span class="reticle"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Direct support line</li>
-          <li><span class="reticle"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Early access builds</li>
-        </ul>
-        <a href="#" class="btn btn-ghost">Select</a>
-      </div>
-    </div>
-  </div>
-</section>
+    // add whatever files you want inside the zip
+    zip.file("posts.json", JSON.stringify(getPosts(), null, 2));
+    zip.file("members.json", JSON.stringify(getMembers(), null, 2));
+    zip.file("readme.txt", "Exported from the forum on " + new Date().toLocaleString());
 
-<section class="pricing" id="pricing-legacy" style="background:var(--bg);color:var(--ink);">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="kicker" style="color:var(--purple-600);">CSGO Legacy pricing</div>
-      <h2 class="display">Legacy plans.</h2>
-      <p style="color:rgba(20,16,31,0.6);">Separate access tier for CSGO Legacy.</p>
-    </div>
-
-    <div class="price-grid">
-      <div class="plan" style="background:var(--white);border-color:var(--line);">
-        <h3 class="display">1 Month</h3>
-        <div class="price"><span class="amount mono" style="color:var(--ink);">€7</span><span class="period" style="color:rgba(20,16,31,0.5);">/ mo</span></div>
-        <p class="desc" style="color:rgba(20,16,31,0.55);">Core movement module.</p>
-        <ul>
-          <li style="color:rgba(20,16,31,0.78);"><span class="reticle" style="color:var(--purple-600);"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>CSGO Legacy support</li>
-          <li style="color:rgba(20,16,31,0.78);"><span class="reticle" style="color:var(--purple-600);"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Community Discord</li>
-          <li style="color:rgba(20,16,31,0.78);"><span class="reticle" style="color:var(--purple-600);"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Basic updates</li>
-        </ul>
-        <a href="#" class="btn btn-ghost">Select</a>
-      </div>
-
-      <div class="plan featured" style="background:linear-gradient(180deg, rgba(124,58,237,0.08), rgba(124,58,237,0.01));">
-        <h3 class="display" style="color:var(--ink);">3 Months</h3>
-        <div class="price"><span class="amount mono" style="color:var(--ink);">€15</span><span class="period" style="color:rgba(20,16,31,0.5);">/ 3mo</span></div>
-        <p class="desc" style="color:rgba(20,16,31,0.55);">Full movement suite for Legacy.</p>
-        <ul>
-          <li style="color:rgba(20,16,31,0.78);"><span class="reticle" style="color:var(--purple-600);"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>CSGO Legacy support</li>
-          <li style="color:rgba(20,16,31,0.78);"><span class="reticle" style="color:var(--purple-600);"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Priority updates</li>
-          <li style="color:rgba(20,16,31,0.78);"><span class="reticle" style="color:var(--purple-600);"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Config presets</li>
-        </ul>
-        <a href="#" class="btn btn-primary">Select</a>
-      </div>
-
-      <div class="plan" style="background:var(--white);border-color:var(--line);">
-        <h3 class="display">Lifetime</h3>
-        <div class="price"><span class="amount mono" style="color:var(--ink);">€29</span><span class="period" style="color:rgba(20,16,31,0.5);">one-time</span></div>
-        <p class="desc" style="color:rgba(20,16,31,0.55);">Pay once, access forever.</p>
-        <ul>
-          <li style="color:rgba(20,16,31,0.78);"><span class="reticle" style="color:var(--purple-600);"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Everything in 3 Months</li>
-          <li style="color:rgba(20,16,31,0.78);"><span class="reticle" style="color:var(--purple-600);"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Direct support line</li>
-          <li style="color:rgba(20,16,31,0.78);"><span class="reticle" style="color:var(--purple-600);"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>Early access builds</li>
-        </ul>
-        <a href="#" class="btn btn-ghost">Select</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  sumware.eu
-</footer>
+    const blob = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "forum-export.zip";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+</script>
 
 </body>
 </html>
